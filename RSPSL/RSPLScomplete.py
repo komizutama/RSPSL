@@ -1,68 +1,62 @@
+#!/usr/bin/env python
+#previous line tells unix to use python to run... using env gets the location of python.
+
 # Rock Paper Scissors Lizard Spock Game
-
-name_to_number = {"rock" : 0, "spock" : 1, "paper" : 2, "lizard" : 3, "scissors": 4}
-oChoice = str()
-
-def number_to_name(number):
-    if number == 0:
-        return "rock"
-    elif number == 1:
-        return "Spock"
-    elif number == 2:
-        return "paper"
-    elif number == 3:
-        return "lizard"
-    elif number == 4:
-        return "scissors"
-
-
-
-def rpsls(player_choice):
-
-    print "\n"
-
-
-    print "You chose " + oChoice + "."
-
-    pNum = name_to_number[player_choice]
-
-
-    cNum = random.randrange(5)
-
-    cChoice = number_to_name(cNum)
-
-    print "The computer chose " + cChoice + "."
-
-
-    wincal = (pNum-cNum) % 5
-
-    if wincal >= 3:
-        print cChoice + " beats " + oChoice + "!"
-        print "The computer wins!"
-    elif wincal >=1:
-        print pChoice.lower() + " beats " + cChoice + "!"
-        print "You win!"
-    else:
-        print "It's a tie!"
-
 import random
-pChoice = str()
-while True:
-    print"\n\nType your choice: rock, Spock, paper, lizard or scissors"
-    pChoice = raw_input(" (or QUIT to stop):")
-    oChoice = pChoice
+numName = ['rock','spock','paper','lizard','scissors']
+winDict={'rock': ['breaks','mashes'], 'spock': ['vaporizes','takes apart'], 'paper': ['disproves','covers'], 'lizard':['eats','poisons'],'scissors':['decapitates','cuts up']}
+playerChoice = str()
+computerChoice = str()
 
-    
-    if pChoice == "spock" :
-        print "Commander Spock was an officer of Starfleet!!!"
-        print "He definitely counts as a proper noun! Try Again!"
-        continue
-    else:
-        pChoice = pChoice.lower()
-        if pChoice == "quit":
+
+def Player_Interface(): 
+    #Player interface portion of the game
+    while True:
+        global playerChoice
+
+        print"\n\n Type your choice: rock, Spock, paper, lizard or scissors"
+        playerChoice = raw_input(" (or QUIT to stop):")
+        
+        if playerChoice == "QUIT":
             break
-        elif pChoice in name_to_number:
-            rpsls(pChoice)
-        else:
-            print pChoice, " is not one of the options! Try Again"
+        if playerChoice == "spock" :
+            print "Commander Spock was an officer of Starfleet!!!"
+            print "He definitely counts as a proper noun! Try Again!"
             continue
+        if (playerChoice in numName) or playerChoice.lower() in numName:
+            playerChoice=playerChoice.lower()
+            numName[1]=numName[1].lower()
+            print Win_Logic((numName.index(playerChoice.lower())))
+        else:
+            print playerChoice, " is not one of the options! Try Again!"
+
+
+def Win_Logic(key1):
+    #Game logic
+    global computerChoice
+
+    key2 = random.randrange(5)
+    numName[1]=numName[1].capitalize()
+    computerChoice = numName[key2]
+    playerChoice =numName[key1]
+    winCal=(key1-key2) % 5
+
+    resultString = "\nYou chose %s.\nThe computer chose %s.\n%s %s %s.\n%s"
+    numName[1]=numName[1].capitalize()
+
+    if winCal == 0:
+        return "You and the computer both chose " + computerChoice + ".\nIt's a tie!"
+    elif winCal >=3:
+        if winCal == 4:
+            winCal = 0
+        if winCal == 3:
+            winCal = 1
+        action = winDict[computerChoice.lower()][winCal]
+        return resultString % (playerChoice,  computerChoice, computerChoice.capitalize(), action, playerChoice, "You lose.")
+    else:
+        winCal = (winCal-1)
+        
+        action = winDict[playerChoice.lower()][winCal]
+        return resultString % (playerChoice,  computerChoice, playerChoice.capitalize(), action, computerChoice, "You win.")
+
+Player_Interface() #Run Game
